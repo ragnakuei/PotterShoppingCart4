@@ -6,47 +6,36 @@ namespace ShoppingCartLib
 {
     public class ShoppingCart
     {
+        private Dictionary<int, decimal> Discounts = new Dictionary<int, decimal>()
+        {
+            { 1, 0 },
+            { 2, 0.05m },
+            { 3, 0.1m },
+            { 4, 0.2m },
+            { 5, 0.25m }
+        };
+
         //  結帳
         public decimal CheckOut(IEnumerable<ShoppingCartItem> shoppingCartItems)
         {
             decimal payment = 0;
             while (GetCountForAmountGreaterEqual1(shoppingCartItems) >= 1)
             {
-                payment += CalcSingleDiscountPayment(shoppingCartItems);
+                decimal discount = 0;
+                Discounts.TryGetValue(GetCountForAmountGreaterEqual1(shoppingCartItems), out discount);
+                payment += 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
                 ItemsAmountMinus1(ref shoppingCartItems);
             }
             return payment;
         }
 
         // 計算單次折扣金額
-        private decimal CalcSingleDiscountPayment(IEnumerable<ShoppingCartItem> shoppingCartItems)
-        {
-            decimal discount = CalcDiscount(shoppingCartItems);
-            return 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
-        }
-
-        // 計算 折扣
-        private decimal CalcDiscount(IEnumerable<ShoppingCartItem> shoudPaymentItems)
-        {
-            decimal discount = 0;
-            switch (GetCountForAmountGreaterEqual1(shoudPaymentItems))
-            {
-                case 2:
-                    discount = 0.05m;
-                    break;
-                case 3:
-                    discount = 0.1m;
-                    break;
-                case 4:
-                    discount = 0.2m;
-                    break;
-                case 5:
-                    discount = 0.25m;
-                    break;
-            }
-
-            return discount;
-        }
+        //private decimal CalcSingleDiscountPayment(IEnumerable<ShoppingCartItem> shoppingCartItems)
+        //{
+        //    decimal discount = 0;
+        //    Discounts.TryGetValue(GetCountForAmountGreaterEqual1(shoppingCartItems),out discount);
+        //    return 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
+        //}
 
         // 計算 數量大於等於 1 的品項數
         private int GetCountForAmountGreaterEqual1(IEnumerable<ShoppingCartItem> shouldPaymentItems)
