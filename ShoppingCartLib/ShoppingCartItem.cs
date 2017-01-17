@@ -24,6 +24,9 @@ namespace ShoppingCartLib
                 case 3:
                     discount = 0.1m;
                     break;
+                case 4:
+                    discount = 0.2m;
+                    break;
             }
 
             return discount;
