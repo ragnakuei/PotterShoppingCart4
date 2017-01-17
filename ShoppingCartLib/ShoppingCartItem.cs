@@ -6,17 +6,30 @@ namespace ShoppingCartLib
 {
     public class ShoppingCart
     {
-        public decimal CheckOut(List<ShoppingCartItem> shoppingCartItems)
+        //  結帳
+        public decimal CheckOut(IEnumerable<ShoppingCartItem> shoppingCartItems)
         {
-            decimal discount = CalcDiscount(shoppingCartItems);
-            return 100 * shoppingCartItems.Sum(item => item.Amount) * (1 - discount);
+            decimal payment = 0;
+            while (GetCountForAmountGreaterEqual1(shoppingCartItems) >= 1)
+            {
+                payment += CalcSingleDiscountPayment(shoppingCartItems);
+                ItemsAmountMinus1(ref shoppingCartItems);
+            }
+            return payment;
         }
 
-        // 取得 折扣
+        // 計算單次折扣金額
+        private decimal CalcSingleDiscountPayment(IEnumerable<ShoppingCartItem> shoppingCartItems)
+        {
+            decimal discount = CalcDiscount(shoppingCartItems);
+            return 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
+        }
+
+        // 計算 折扣
         private decimal CalcDiscount(IEnumerable<ShoppingCartItem> shoudPaymentItems)
         {
             decimal discount = 0;
-            switch (shoudPaymentItems.Count())
+            switch (GetCountForAmountGreaterEqual1(shoudPaymentItems))
             {
                 case 2:
                     discount = 0.05m;
@@ -33,6 +46,19 @@ namespace ShoppingCartLib
             }
 
             return discount;
+        }
+
+        // 計算 數量大於等於 1 的品項數
+        private int GetCountForAmountGreaterEqual1(IEnumerable<ShoppingCartItem> shouldPaymentItems)
+        {
+            return shouldPaymentItems.Count(item => item.Amount >= 1);
+        }
+
+        // 對數量大於等於 1 的品項數量減1
+        private void ItemsAmountMinus1(ref IEnumerable<ShoppingCartItem> shouldPaymentItems)
+        {
+            foreach (var shoppingCartItem in shouldPaymentItems.Where(item => item.Amount >= 1))
+            { shoppingCartItem.Amount--; }
         }
     }
 
