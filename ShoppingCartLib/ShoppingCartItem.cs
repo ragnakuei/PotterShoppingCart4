@@ -8,11 +8,25 @@ namespace ShoppingCartLib
     {
         public decimal CheckOut(List<ShoppingCartItem> shoppingCartItems)
         {
-            decimal discount = 0;
-            if (shoppingCartItems.Count() == 2)
-            { discount = 0.05m; }
-
+            decimal discount = CalcDiscount(shoppingCartItems);
             return 100 * shoppingCartItems.Sum(item => item.Amount) * (1 - discount);
+        }
+
+        // 取得 折扣
+        private decimal CalcDiscount(IEnumerable<ShoppingCartItem> shoudPaymentItems)
+        {
+            decimal discount = 0;
+            switch (shoudPaymentItems.Count())
+            {
+                case 2:
+                    discount = 0.05m;
+                    break;
+                case 3:
+                    discount = 0.1m;
+                    break;
+            }
+
+            return discount;
         }
     }
 
