@@ -7,7 +7,13 @@ namespace ShoppingCartLib
     public class ShoppingCart
     {
         public decimal CheckOut(List<ShoppingCartItem> shoppingCartItems)
-        { return 100 * shoppingCartItems.Sum(item => item.Amount); }
+        {
+            decimal discount = 0;
+            if (shoppingCartItems.Count() == 2)
+            { discount = 0.05m; }
+
+            return 100 * shoppingCartItems.Sum(item => item.Amount) * (1 - discount);
+        }
     }
 
     public class ShoppingCartItem
