@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ShoppingCartLib
 {
     public class ShoppingCart
     {
         public decimal CheckOut(List<ShoppingCartItem> shoppingCartItems)
-        {
-            return 0;
-        }
+        { return 100 * shoppingCartItems.Sum(item => item.Amount); }
     }
 
     public class ShoppingCartItem
     {
-        private int _productId;
-        private string _productName;
-        private int _amount;
 
         public ShoppingCartItem(int productId, string productName, int amount)
         {
-            this._productId = productId;
-            this._productName = productName;
-            this._amount = amount;
+            this.Id = productId;
+            this.Name = productName;
+            this.Amount = amount;
         }
+
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public int Amount { get; internal set; }
     }
 }
