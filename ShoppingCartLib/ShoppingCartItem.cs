@@ -16,26 +16,33 @@ namespace ShoppingCartLib
         };
 
         //  結帳
+        //public decimal CheckOut(IEnumerable<ShoppingCartItem> shoppingCartItems)
+        //{
+        //    decimal payment = 0;
+        //    while (GetCountForAmountGreaterEqual1(shoppingCartItems) >= 1)
+        //    {
+        //        decimal discount = 0;
+        //        Discounts.TryGetValue(GetCountForAmountGreaterEqual1(shoppingCartItems), out discount);
+        //        payment += 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
+        //        ItemsAmountMinus1(ref shoppingCartItems);
+        //    }
+        //    return payment;
+        //}
+
+        //  結帳 - 遞迴
         public decimal CheckOut(IEnumerable<ShoppingCartItem> shoppingCartItems)
         {
-            decimal payment = 0;
-            while (GetCountForAmountGreaterEqual1(shoppingCartItems) >= 1)
+            if (GetCountForAmountGreaterEqual1(shoppingCartItems) >= 1)
             {
                 decimal discount = 0;
                 Discounts.TryGetValue(GetCountForAmountGreaterEqual1(shoppingCartItems), out discount);
-                payment += 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
+                decimal payment = 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
                 ItemsAmountMinus1(ref shoppingCartItems);
+                payment += CheckOut(shoppingCartItems);
+                return payment;
             }
-            return payment;
+            return 0;
         }
-
-        // 計算單次折扣金額
-        //private decimal CalcSingleDiscountPayment(IEnumerable<ShoppingCartItem> shoppingCartItems)
-        //{
-        //    decimal discount = 0;
-        //    Discounts.TryGetValue(GetCountForAmountGreaterEqual1(shoppingCartItems),out discount);
-        //    return 100 * GetCountForAmountGreaterEqual1(shoppingCartItems) * (1 - discount);
-        //}
 
         // 計算 數量大於等於 1 的品項數
         private int GetCountForAmountGreaterEqual1(IEnumerable<ShoppingCartItem> shouldPaymentItems)
